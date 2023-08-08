@@ -34,7 +34,7 @@ class MiApparcamientoController {
     }
 
     #[Route('/signup', methods: ['POST'])]
-    public function signUp (Request $request) {
+    public function signUpAction (Request $request) {
 
         $correo = $request->get("correo");
         $contrasenna = $request->get("contrasenna");
@@ -48,6 +48,25 @@ class MiApparcamientoController {
             "correo" => $correo,
             "contrasenna" => $contrasenna,
             "nombre" => $nombre
+        ]);
+    }
+
+    #[Route('/registervehicle', methods: ['POST'])]
+    public function registerVehicleAction (Request $request) {
+        $marca = $request->get("marca");
+        $modelo = $request->get("modelo");
+        $longitud_del_carro = $request->get("longitud_del_carro");
+        $id = $request->get("id");
+
+        if (is_null($marca) || is_null($modelo) || is_null($longitud_del_carro) || is_null($id)){
+            return new Response(status: 401);
+        }
+
+        return new JsonResponse([
+            "marca" => $marca,
+            "modelo" => $modelo,
+            "longitud_del_carro" => $longitud_del_carro,
+            "id" => $id
         ]);
     }
 }
