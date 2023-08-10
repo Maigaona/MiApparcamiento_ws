@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/miapparcamiento')]
 class MiApparcamientoController {
 
-    #route sierve para saber la ruta del endpoint
+    #route sirve para saber la ruta del endpoint
     #[Route('/login')]
 
     #El request sirve para obtener los parametros que envia la app
@@ -21,7 +21,7 @@ class MiApparcamientoController {
 
         #Si correo o contraseña es nulo es porque no estan en el request y regresa un error 401
         if (is_null($correo) || is_null($contrasenna)){
-            return new Response(status: 401);
+            return new Response(status: 400);
         }
 
 
@@ -41,7 +41,7 @@ class MiApparcamientoController {
         $nombre = $request->get("nombre");
 
         if (is_null($correo) || is_null($contrasenna) || is_null($nombre)){
-            return new Response(status: 401);
+            return new Response(status: 400);
         }
 
         return new JsonResponse([
@@ -59,7 +59,7 @@ class MiApparcamientoController {
         $id = $request->get("id");
 
         if (is_null($marca) || is_null($modelo) || is_null($longitud_del_carro) || is_null($id)){
-            return new Response(status: 401);
+            return new Response(status: 400);
         }
 
         return new JsonResponse([
@@ -69,4 +69,78 @@ class MiApparcamientoController {
             "id" => $id
         ]);
     }
+
+    #[Route('/buymembership', methods: ['POST'])]
+    public function buyMembership (Request $request) {
+        $membresia = $request->get("membresia");
+        $nombre = $request->get("nombre");
+        $numero = $request->get("numero");
+        $mes = $request->get("mes");
+        $anno = $request->get("anno");
+        $cvv = $request->get("cvv");
+        $id = $request->get("id");
+
+        if (is_null($membresia) || is_null($nombre) ||
+            is_null($numero) || is_null($mes) || is_null($anno) ||
+        is_null($cvv) || is_null($id)){
+            return new Response(status: 400);
+        }
+
+        return new JsonResponse([
+            "membresia" => $membresia,
+            "nombre" => $nombre,
+            "numero" => $numero,
+            "mes" => $mes,
+            "anno" => $anno,
+            "cvv" => $cvv,
+            "id" => $id,
+        ]);
+    }
+
+    #[Route('/parkingspace')]
+    public function parkingSpace (Request $request) {
+        $latitud = $request->get("latitud");
+        $longitud = $request->get("longitud");
+        $id = $request->get("id");
+
+        if (is_null($latitud) || is_null($longitud) || is_null($id)){
+            return new Response(status: 400);
+        }
+
+        return new JsonResponse([
+            "latitud " => $latitud,
+            "longitud" => $longitud,
+            "id" => $id,
+        ]);
+    }
+
+    #[Route('/parkingspaceplace')]
+    public function parkingSpacePlace(Request $request) {
+        $lugar = $request->get("lugar");
+        $id = $request->get("id");
+
+        if (is_null($lugar) || is_null($id)){
+            return new Response(status: 400);
+        }
+
+        return new JsonResponse([
+            "lugar" => $lugar,
+            "id" =>$id
+        ]);
+    }
+
+    #[Route('/userinfo')]
+    public function userInfo(Request $request) {
+        $id = $request->get("id");
+
+        if (is_null($id)){
+            return new Response(status: 400);
+        }
+
+        return new JsonResponse([
+            "id" => $id,
+        ]);
+    }
+
+
 }
