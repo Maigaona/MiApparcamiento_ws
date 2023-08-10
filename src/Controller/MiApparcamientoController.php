@@ -25,9 +25,11 @@ class MiApparcamientoController extends AbstractController {
 
         #Si correo o contraseña es nulo es porque no estan en el request y regresa un error 401
         if (is_null($correo) || is_null($contrasenna)){
-            $logger->error("No envio correo o contraseña");
+            $logger->error("No envio correo o contraseña!");
             return new Response(status: 400);
         }
+
+        $logger->debug("el usuario $correo inicio sesion!");
 
 
         #TODO: Buscar usuario y contrasenna en la base de datos
@@ -47,9 +49,11 @@ class MiApparcamientoController extends AbstractController {
         $nombre = $request->get("nombre");
 
         if (is_null($correo) || is_null($contrasenna) || is_null($nombre)){
-            $logger->error("No envio correo, contraseña o nombre");
+            $logger->error("No envio correo, contraseña o nombre!");
             return new Response(status: 400);
         }
+
+        $logger->debug("el usuario $correo a sido registrado!");
 
         return new JsonResponse([
             "correo" => $correo,
@@ -67,9 +71,11 @@ class MiApparcamientoController extends AbstractController {
         $id = $request->get("id");
 
         if (is_null($marca) || is_null($modelo) || is_null($longitud_del_carro) || is_null($id)){
-            $logger->error("No envio marca, modelo, longitud_del_carro o id");
+            $logger->error("No envio marca, modelo, longitud_del_carro o id!");
             return new Response(status: 400);
         }
+
+        $logger->debug("El usuario $id envio su marca, modelo y longitud de su carro!");
 
         return new JsonResponse([
             "marca" => $marca,
@@ -93,9 +99,11 @@ class MiApparcamientoController extends AbstractController {
         if (is_null($membresia) || is_null($nombre) ||
             is_null($numero) || is_null($mes) || is_null($anno) ||
         is_null($cvv) || is_null($id)){
-            $logger->error("No envio membresia, nombre, numero, mes, anno, ccvv o id");
+            $logger->error("No envio membresia, nombre, numero, mes, anno, ccvv o id!");
             return new Response(status: 400);
         }
+
+        $logger->debug("El usuario $id quiere comprar la membresia $membresia, nombre, numero, mes, anno y cvv!");
 
         return new JsonResponse([
             "membresia" => $membresia,
@@ -116,9 +124,11 @@ class MiApparcamientoController extends AbstractController {
         $id = $request->get("id");
 
         if (is_null($latitud) || is_null($longitud) || is_null($id)){
-            $logger->error("No envio lalitud, longitud o id");
+            $logger->error("No envio lalitud, longitud o id!");
             return new Response(status: 400);
         }
+
+        $logger->debug("El usuario $id envio la latitud y longitud de su ubicación!");
 
         return new JsonResponse([
             "latitud " => $latitud,
@@ -134,9 +144,11 @@ class MiApparcamientoController extends AbstractController {
         $id = $request->get("id");
 
         if (is_null($lugar) || is_null($id)){
-            $logger->error("No envio lugar o id");
+            $logger->error("No envio lugar o id!");
             return new Response(status: 400);
         }
+
+        $logger->debug("El usuario $id envio el lugar de la ubicacion!");
 
         return new JsonResponse([
             "lugar" => $lugar,
@@ -153,6 +165,8 @@ class MiApparcamientoController extends AbstractController {
             $logger->error("No envio id");
             return new Response(status: 400);
         }
+
+        $logger->debug("Regresando informacion del usuario $id");
 
         return new JsonResponse([
             "id" => $id,
