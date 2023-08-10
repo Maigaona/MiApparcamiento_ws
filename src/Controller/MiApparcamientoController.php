@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +18,8 @@ class MiApparcamientoController extends AbstractController {
 
     #El request sirve para obtener los parametros que envia la app
     public function loginAction (Request $request,
-                                LoggerInterface $logger) {
+                                LoggerInterface $logger,
+                                    EntityManagerInterface $entityManager){
 
         #En la variable correo guardamos el valor del parametro correo
         $correo = $request->get("correo");
@@ -29,13 +31,30 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
+        $conn = $entityManager->getConnection();
+
+        $res = $conn->fetchAllAssociative("
+            select id
+            from usuario
+            where correo = :correo
+            and contrasenna = :contrasenna",
+        ["correo" => $correo, "contrasenna" => $contrasenna]);
+
+        if (count($res) == 0){
+            return new Response(status: 404);
+        }
+        else {
+            $id = $res[0]['id'];
+        }
+
+
         $logger->debug("el usuario $correo inicio sesion!");
 
 
-        #TODO: Buscar usuario y contrasenna en la base de datos
+
+
         return new JsonResponse([
-                "correo" => $correo,
-                "contrasenna" => $contrasenna
+                "id" => $id
         ]);
 
     }
