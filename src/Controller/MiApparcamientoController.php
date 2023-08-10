@@ -2,18 +2,22 @@
 
 namespace App\Controller;
 
+
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 #[Route('/miapparcamiento')]
-class MiApparcamientoController {
+class MiApparcamientoController extends AbstractController {
 
     #route sirve para saber la ruta del endpoint
     #[Route('/login')]
 
     #El request sirve para obtener los parametros que envia la app
-    public function loginAction (Request $request) {
+    public function loginAction (Request $request,
+                                LoggerInterface $logger) {
 
         #En la variable correo guardamos el valor del parametro correo
         $correo = $request->get("correo");
@@ -21,6 +25,7 @@ class MiApparcamientoController {
 
         #Si correo o contraseña es nulo es porque no estan en el request y regresa un error 401
         if (is_null($correo) || is_null($contrasenna)){
+            $logger->error("No envio correo o contraseña");
             return new Response(status: 400);
         }
 
@@ -34,13 +39,15 @@ class MiApparcamientoController {
     }
 
     #[Route('/signup', methods: ['POST'])]
-    public function signUpAction (Request $request) {
+    public function signUpAction (Request $request,
+                                  LoggerInterface $logger) {
 
         $correo = $request->get("correo");
         $contrasenna = $request->get("contrasenna");
         $nombre = $request->get("nombre");
 
         if (is_null($correo) || is_null($contrasenna) || is_null($nombre)){
+            $logger->error("No envio correo, contraseña o nombre");
             return new Response(status: 400);
         }
 
@@ -52,13 +59,15 @@ class MiApparcamientoController {
     }
 
     #[Route('/registervehicle', methods: ['POST'])]
-    public function registerVehicleAction (Request $request) {
+    public function registerVehicleAction (Request $request,
+                                                LoggerInterface $logger) {
         $marca = $request->get("marca");
         $modelo = $request->get("modelo");
         $longitud_del_carro = $request->get("longitud_del_carro");
         $id = $request->get("id");
 
         if (is_null($marca) || is_null($modelo) || is_null($longitud_del_carro) || is_null($id)){
+            $logger->error("No envio marca, modelo, longitud_del_carro o id");
             return new Response(status: 400);
         }
 
@@ -71,7 +80,8 @@ class MiApparcamientoController {
     }
 
     #[Route('/buymembership', methods: ['POST'])]
-    public function buyMembership (Request $request) {
+    public function buyMembership (Request $request,
+                                        LoggerInterface $logger) {
         $membresia = $request->get("membresia");
         $nombre = $request->get("nombre");
         $numero = $request->get("numero");
@@ -83,6 +93,7 @@ class MiApparcamientoController {
         if (is_null($membresia) || is_null($nombre) ||
             is_null($numero) || is_null($mes) || is_null($anno) ||
         is_null($cvv) || is_null($id)){
+            $logger->error("No envio membresia, nombre, numero, mes, anno, ccvv o id");
             return new Response(status: 400);
         }
 
@@ -98,12 +109,14 @@ class MiApparcamientoController {
     }
 
     #[Route('/parkingspace')]
-    public function parkingSpace (Request $request) {
+    public function parkingSpace (Request $request,
+                                        LoggerInterface $logger) {
         $latitud = $request->get("latitud");
         $longitud = $request->get("longitud");
         $id = $request->get("id");
 
         if (is_null($latitud) || is_null($longitud) || is_null($id)){
+            $logger->error("No envio lalitud, longitud o id");
             return new Response(status: 400);
         }
 
@@ -115,11 +128,13 @@ class MiApparcamientoController {
     }
 
     #[Route('/parkingspaceplace')]
-    public function parkingSpacePlace(Request $request) {
+    public function parkingSpacePlace(Request $request,
+                                            LoggerInterface $logger) {
         $lugar = $request->get("lugar");
         $id = $request->get("id");
 
         if (is_null($lugar) || is_null($id)){
+            $logger->error("No envio lugar o id");
             return new Response(status: 400);
         }
 
@@ -130,10 +145,12 @@ class MiApparcamientoController {
     }
 
     #[Route('/userinfo')]
-    public function userInfo(Request $request) {
+    public function userInfo(Request $request,
+                                    LoggerInterface $logger) {
         $id = $request->get("id");
 
         if (is_null($id)){
+            $logger->error("No envio id");
             return new Response(status: 400);
         }
 
