@@ -192,7 +192,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/parkingspaceplace')]
     public function parkingSpacePlace(Request $request,
-                                            LoggerInterface $logger) {
+                                            LoggerInterface $logger,
+                                                EntityManagerInterface $entityManager) {
         $lugar = $request->get("lugar");
         $id = $request->get("id");
 
@@ -201,11 +202,27 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
+        $conn = $entityManager->getConnection();
+
+        #TODO: Obtener las coordenadas del lugar
+        #TODO: Buscar solo los cajones a 500m de la ubicación que ingreso el usuario
+
+        $res = $conn ->fetchAllAssociative("
+        select cajon.id as id, direccion, latitud, longitud, ocupado, distancia_libre
+        from cajon join sensor
+        on cajon.sensor_id = sensor.id
+        ");
+
+        $num_cajones = count($res);
+
+        $logger->debug("Resultado tiene $num_cajones cajones!");
+
         $logger->debug("El usuario $id envio el lugar de la ubicacion!");
 
+        #TODO: Calcular colores de los cajones
+
         return new JsonResponse([
-            "lugar" => $lugar,
-            "id" =>$id
+            "cajones" => $res,
         ]);
     }
 
