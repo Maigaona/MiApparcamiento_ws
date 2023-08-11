@@ -119,7 +119,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/buymembership', methods: ['POST'])]
     public function buyMembership (Request $request,
-                                        LoggerInterface $logger) {
+                                        LoggerInterface $logger,
+                                            EntityManagerInterface $entityManager) {
         $membresia = $request->get("membresia");
         $nombre = $request->get("nombre");
         $numero = $request->get("numero");
@@ -134,6 +135,11 @@ class MiApparcamientoController extends AbstractController {
             $logger->error("No envio membresia, nombre, numero, mes, anno, ccvv o id!");
             return new Response(status: 400);
         }
+
+        $conn = $entityManager->getConnection();
+
+        $conn ->executeQuery("
+        ");
 
         $logger->debug("El usuario $id quiere comprar la membresia $membresia, nombre, numero, mes, anno y cvv!");
 
@@ -150,7 +156,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/parkingspace')]
     public function parkingSpace (Request $request,
-                                        LoggerInterface $logger) {
+                                        LoggerInterface $logger,
+                                                EntityManagerInterface $entityManager) {
         $latitud = $request->get("latitud");
         $longitud = $request->get("longitud");
         $id = $request->get("id");
@@ -160,12 +167,26 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
+        $conn = $entityManager->getConnection();
+
+        #TODO: Buscar solo los cajones a 500m del usuario
+
+        $res = $conn ->fetchAllAssociative("
+        select cajon.id as id, direccion, latitud, longitud, ocupado, distancia_libre
+        from cajon join sensor
+        on cajon.sensor_id = sensor.id
+        ");
+
+        $num_cajones = count($res);
+
+        $logger->debug("Resultado tiene $num_cajones cajones!");
+
         $logger->debug("El usuario $id envio la latitud y longitud de su ubicación!");
 
+        #TODO: Calcular colores de los cajones
+
         return new JsonResponse([
-            "latitud " => $latitud,
-            "longitud" => $longitud,
-            "id" => $id,
+            "cajones" => $res,
         ]);
     }
 
