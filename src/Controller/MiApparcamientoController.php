@@ -92,7 +92,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/registervehicle', methods: ['POST'])]
     public function registerVehicleAction (Request $request,
-                                                LoggerInterface $logger) {
+                                                LoggerInterface $logger,
+                                                    EntityManagerInterface $entityManager) {
         $marca = $request->get("marca");
         $modelo = $request->get("modelo");
         $longitud_del_carro = $request->get("longitud_del_carro");
@@ -103,14 +104,17 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
+        $conn = $entityManager->getConnection();
+
+        $conn->executeQuery("
+        update usuario
+        set marca = :marca, modelo = :modelo, longitud_del_carro = :longitud_del_carro
+        where id = :id",
+        ["marca" => $marca, "modelo" => $modelo, "longitud_del_carro" => $longitud_del_carro, "id" => $id]);
+
         $logger->debug("El usuario $id envio su marca, modelo y longitud de su carro!");
 
-        return new JsonResponse([
-            "marca" => $marca,
-            "modelo" => $modelo,
-            "longitud_del_carro" => $longitud_del_carro,
-            "id" => $id
-        ]);
+        return new Response(status: 200);
     }
 
     #[Route('/buymembership', methods: ['POST'])]
