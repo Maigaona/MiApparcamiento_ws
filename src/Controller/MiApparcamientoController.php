@@ -256,5 +256,22 @@ class MiApparcamientoController extends AbstractController {
         return new JsonResponse($res[0]);
     }
 
+    #[Route('/membership')]
+    public function membershipAction(Request $request,
+                                        LoggerInterface $logger,
+                                            EntityManagerInterface $entityManager){
+
+        $conn = $entityManager->getConnection();
+
+        $res = $conn->fetchAllAssociative("
+        select * from membresia ");
+
+        $logger->debug("Regresando lista de membresias");
+
+        return new JsonResponse($res);
+    }
+
+
+
 
 }
