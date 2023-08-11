@@ -61,7 +61,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/signup', methods: ['POST'])]
     public function signUpAction (Request $request,
-                                  LoggerInterface $logger) {
+                                  LoggerInterface $logger,
+                                        EntityManagerInterface $entityManager) {
 
         $correo = $request->get("correo");
         $contrasenna = $request->get("contrasenna");
@@ -72,12 +73,20 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
-        $logger->debug("el usuario $correo a sido registrado!");
+        $conn = $entityManager->getConnection();
+
+        $conn->executeQuery("
+        insert into usuario (correo, contrasenna, nombre)
+        values (:correo, :contrasenna, :nombre)",
+        ["correo" => $correo, "contrasenna" => $contrasenna, "nombre" => $nombre]);
+
+        $id = $conn->lastInsertId();
+
+
+        $logger->debug("el usuario $correo ha sido registrado!");
 
         return new JsonResponse([
-            "correo" => $correo,
-            "contrasenna" => $contrasenna,
-            "nombre" => $nombre
+            "id" => $id,
         ]);
     }
 
