@@ -228,7 +228,8 @@ class MiApparcamientoController extends AbstractController {
 
     #[Route('/userinfo')]
     public function userInfo(Request $request,
-                                    LoggerInterface $logger) {
+                                    LoggerInterface $logger,
+                                            EntityManagerInterface $entityManager) {
         $id = $request->get("id");
 
         if (is_null($id)){
@@ -236,11 +237,23 @@ class MiApparcamientoController extends AbstractController {
             return new Response(status: 400);
         }
 
+        $conn = $entityManager->getConnection();
+
+        $res = $conn->fetchAllAssociative("
+        select id, nombre, correo, longitud_del_carro, membresia_tipo, membresia_inicio,
+        membresia_sig_tipo, membresia_sig_inicio, marca, modelo
+        from usuario
+        where id = :id ",
+        ["id" => $id]);
+
+        if (count($res) == 0){
+            $logger->error("El usuario $id no existe");
+            return new Response(status: 404);
+        }
+
         $logger->debug("Regresando informacion del usuario $id");
 
-        return new JsonResponse([
-            "id" => $id,
-        ]);
+        return new JsonResponse($res[0]);
     }
 
 
